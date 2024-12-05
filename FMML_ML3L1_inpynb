@@ -1,0 +1,808 @@
+FOUNDATIONS OF MODERN MACHINE LEARNING, IIIT Hyderabad
+MODULE 3: CLASSIFICATION-1
+LAB-1 : Understanding Distance metrics and Introduction to KNN
+Module Coordinator: Jashn Arora
+SECTION - 1 : Distance metrics
+
+[ ]
+# Importing Required Libraries
+import numpy as np
+import pandas as pd
+import math
+from scipy.spatial import distance
+import matplotlib.pyplot as plt
+Euclidean Distance
+There is more than one way to define distance. The most familiar distance metric is probably Euclidean distance, which is the straight-line distance between the two points. The formula for calculating this distance is a generalization of the Pythagorean theorem:
+
+d(x,x′)=∑j=1D(xj−x′j)2−−−−−−−−−−−⎷
+
+euclidean.png
+
+Image Source
+
+
+[ ]
+# Simple 2D example
+x_1 = np.array((1, 2))
+x_2 = np.array((4, 6))
+
+[ ]
+# Naive approach to calculating Euclidean distance (not-vectorized)
+sumv = 0
+for i in range(len(x_1)):
+  sumv += ((x_1[i]-x_2[i])**2)
+dist = math.sqrt(sumv)
+print(dist)
+5.0
+
+[ ]
+## TASK-1
+## Write a vectorized version of computing Euclidean distance (using numpy) in the space given below
+## (Expected number of lines ~ 1). Your answer should be stored in the variable 'euclidean_dist'
+## Verify this result with what you saw above
+
+# Write your code below and uncomment the lines below in order to run the cell.
+
+# euclidean_dist =
+# print(euclidean_dist)
+Answer to Task-1
+
+[ ]
+5.0
+
+[ ]
+# Libraries such as SciPy provide functions to compute different kinds of distance metrics between points
+euclidean_dist = distance.euclidean(x_1, x_2)
+print(euclidean_dist)
+5.0
+
+[ ]
+# 3-D Visualization
+plotx = np.linspace(-10,10,50)
+meshx, meshy = np.meshgrid(plotx,plotx)
+
+[ ]
+tempeuclid = np.sqrt((meshx**2 + meshy**2))
+
+[ ]
+import plotly.graph_objects as go
+
+fig = go.Figure(data=[go.Surface(z=tempeuclid, x=plotx, y=plotx)])
+fig.update_layout(title='Euclidean Distance from origin', autosize=False,
+                  width=1000, height=1000,
+                  margin=dict(l=65, r=50, b=65, t=90))
+fig.show()
+
+Manhattan Distance
+Euclidean distance is not the only way to measure how far apart two points are. Manhattan distance (also called taxicab distance) measures the distance a taxicab in would have to drive to travel from A to B. Taxicabs cannot travel in a straight line because they have to follow the street grid. But there are multiple paths along the street grid that all have exactly the same length; the Manhattan distance is the length of any one of these shortest paths. The formula for Manhattan distance is as follows:
+d(x,x′)=∑j=1D|xj−x′j|
+
+manhattan.png
+
+Image Source
+
+
+[ ]
+# Libraries such as SciPy provide functions to compute different kinds of distance metrics between points
+# x_1 = np.array((1, 2))
+# x_2 = np.array((4, 6))
+manhattan_dist = distance.cityblock(x_1, x_2)
+print(manhattan_dist)
+7
+
+[ ]
+## TASK-2
+## Write a vectorized version of computing Manhattan distance (using numpy) in the space given below
+## (Expected number of lines ~ 1). Your answer should be stored in the variable 'manhattan_dist'
+## Verify your result with the output of the scipy function in the previous cell.
+
+# Write your code below and uncomment the lines below in order to run the cell.
+
+# manhattan_dist =
+# print(manhattan_dist)
+Answer to Task-2
+
+[ ]
+7
+
+[ ]
+# 3-D visualization
+plotx = np.linspace(-10,10,50)
+meshx, meshy = np.meshgrid(plotx,plotx)
+
+[ ]
+tempmanhattan = np.abs(meshx) + np.abs(meshy)
+
+[ ]
+import plotly.graph_objects as go
+
+fig = go.Figure(data=[go.Surface(z=tempmanhattan, x=plotx, y=plotx)])
+fig.update_layout(title='Manhattan Distance from origin', autosize=False,
+                  width=1000, height=1000,
+                  margin=dict(l=65, r=50, b=65, t=90))
+fig.show()
+
+Minkowski Distance
+
+[ ]
+↳ 3 cells hidden
+Hamming Distance
+
+[ ]
+↳ 2 cells hidden
+Cosine Similarity
+
+[ ]
+↳ 2 cells hidden
+Chebyshev Distance
+
+[ ]
+↳ 2 cells hidden
+Jaccard Distance
+The Jaccard distance is a metric that measures dissimilarity between sample sets.
+Jaccard Index ie, J(A,B)=|A∩B||A∪B|
+Jaccard Distance ie, dJ(A,B)=1−J(A,B)=1−|A∩B||A∪B|
+
+
+[ ]
+↳ 2 cells hidden
+Haversine distance
+The Haversine formula calculates the shortest distance between two points on a sphere using their latitudes and longitudes measured along the surface. It is important for use in navigation.
+
+
+[ ]
+def haversine(coord1, coord2):
+
+    # Coordinates in decimal degrees (e.g. 2.89078, 12.79797)
+    lon1, lat1 = coord1
+    lon2, lat2 = coord2
+
+    R = 6371000  # radius of Earth in meters
+    phi_1 = math.radians(lat1)
+    phi_2 = math.radians(lat2)
+
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lon2 - lon1)
+
+    a = math.sin(delta_phi / 2.0) ** 2 + math.cos(phi_1) * math.cos(phi_2) * math.sin(delta_lambda / 2.0) ** 2
+
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    meters = R * c  # output distance in meters
+    km = meters / 1000.0  # output distance in kilometers
+
+    meters = round(meters, 3)
+    km = round(km, 3)
+
+
+    print(f"Distance: " + str(km) + " km")
+
+[ ]
+haversine([-0.116773, 51.510357], [-77.009003, 38.889931])
+Distance: 5897.658 km
+How to decide the appropriate distance metric ?
+Euclidean distance: The most widely used metric in KNN classification problems, since it calculates the straight line distance between two points.
+
+Manhattan distance: In some cases, Manhattan distance maybe preferable over Euclidean distances. For eg: For data with high dimensionality, Manhattan distance maybe more useful. When Euclidean distance is defined using many coordinates, there is not a lot of difference in the distances between different pairs of points. This is due to the Curse of Dimensionality, ie, "when the dimensionality increases, the volume of the space increases so fast that the available data become sparse".
+Manhattan distance is a more appropriate metric to use if the data is, for example, in the form of a grid. For instance, if the data consists of several houses that are arranged in the form of a grid and connected by roads, Euclidean distance is not an appropriate indicator of the distance between the houses, as in real-life, one would take the roads to travel between two points, thus making Manhattan distance a more suitable metric.
+
+Cosine Similarity: Cosine similarity is commonly used in text-analytics and document comparison problems. It is also used in collaborative filtering-based recommendation systems. It is used when the magnitude of the vectors is not of importance.
+
+Hamming Distance: It is commonly used to measure the distance between categorical variables.
+
+Jaccard Index: The Jaccard index is often used in applications where binary data is used. It can also be used in text similarity analysis to measure how much word choice overlap there is between documents
+
+SECTION - 2 : KNN
+What is KNN ?
+K-NN (K- Nearest Neighbours) is a classification technique where the output is a class membership.
+An object is classified by a plurality vote of its neighbors, with the object being assigned to the class most common among its k nearest neighbors (k is a positive integer, typically small). If k = 1, then the object is simply assigned to the class of that single nearest neighbor.
+
+What is so unique about KNN ?
+First off, KNN is a supervised learning algorithm, ie, the idea is to learn a function that can map an input to an output given some example pairs.
+
+It is a non-parametric algorithm, since it doesn't assume anything about the form of the mapping function, which makes it very flexible to use. Certain algorithms are parametric (such as Naive Bayes), which are constrained as they require a specified form. KNN can, thus, be a good algorithm to try if the form is unknown.
+
+Moreover, KNN is an instance-based algorithm, since it compares new problems/inputs with those which were seen during model training and that were stored in memory.
+
+SECTION - 2.1: KNN on a Synthetic Dataset
+In the previous section, you saw different kinds of distance metrics and their values on two sample 2-dimensional points.
+This section covers use of distance metrics in a KNN classifier for synthetic two-dimensional data.
+
+
+[ ]
+import random
+import scipy.stats as ss
+from sklearn.neighbors import KNeighborsClassifier
+
+[ ]
+def generate_synth_data(n = 50):
+    points = np.concatenate((ss.norm(0, 1).rvs((n, 2)), ss.norm(1, 1).rvs((n, 2))), axis = 0)
+    outcomes = np.concatenate((np.repeat(0, n), np.repeat(1, n)))
+    return (points, outcomes)
+
+n = 50
+pts,tgts = generate_synth_data(n) #generates 100 points
+# print(tgts)
+plt.figure()
+plt.plot(pts[:n, 0], pts[:n, 1], "ro")
+plt.plot(pts[n:, 0], pts[n:, 1], "bo")
+plt.show()
+
+
+[ ]
+n = 15
+test_pts,test_tgts = generate_synth_data(n)
+# print(test_tgts)
+plt.figure()
+plt.plot(test_pts[:n, 0], test_pts[:n, 1], "ro")
+plt.plot(test_pts[n:, 0], test_pts[n:, 1], "bo")
+plt.show()
+
+
+[ ]
+## TASK - 3
+## The code given below is that of a KNN classifier, provided by Scikit-learn.
+## The parameter 'metric' includes various distance metric options, including those
+## we learnt above- manhattan, euclidean, minkowski,chebyshev, hamming, etc.
+
+## Try out different metrics and observe changes in the accuracy, if any. Don't change value of 'k'
+## Also, experiment with different metrics and observe if they are applicable for this kind of data.
+## If there are any additional parameters needed, for instance, 'p' in case of Minkowski distance, include them.
+
+knn = KNeighborsClassifier(n_neighbors = 3)
+knn.fit(pts, tgts)
+our_predictions = knn.predict(test_pts)
+print("Prediction Accuracy: ")
+print(100 * np.mean(our_predictions == test_tgts))
+Prediction Accuracy: 
+66.66666666666666
+SECTION - 2.2: KNN on a Real World dataset
+The Iris flower data set or Fisher's Iris data set is a multivariate data set that consists of 50 samples from each of three species of Iris (Iris setosa, Iris virginica and Iris versicolor). Four features were measured from each sample: the length and the width of the sepals and petals, in centimeters.
+
+
+[ ]
+from sklearn.datasets import load_iris
+iris = load_iris()
+data = pd.DataFrame(iris.data, columns=iris.feature_names)
+# data['species'] = pd.Categorical.from_codes(iris.target, iris.target_names)
+data['target'] = pd.Series(iris.target)
+data.head(10)
+
+
+[ ]
+np.random.seed(123)
+indices = np.random.permutation(data.shape[0])
+div = int(0.65 * len(indices))
+train_idx, test_idx = indices[:div], indices[div:]
+
+train_set, test_set = data.loc[train_idx,:], data.loc[test_idx,:]
+test_class = list(test_set.iloc[:,-1])
+train_class = list(train_set.iloc[:,-1])
+
+[ ]
+def dist_euclidean(X1,X2):
+    return distance.euclidean(X1,X2)
+
+[ ]
+def dist_cosine(X1,X2):
+    return distance.cosine(X1,X2)
+
+[ ]
+def dist_manhattan(X1,X2):
+    return distance.cityblock(X1,X2)
+
+[ ]
+def dist_chebyshev(X1,X2):
+    return distance.chebyshev(X1,X2)
+
+[ ]
+metrics_list = [dist_euclidean,dist_cosine, dist_manhattan, dist_chebyshev]
+for dist_metric in metrics_list:
+  knn = KNeighborsClassifier(n_neighbors = 3, metric=dist_metric)
+  knn.fit(train_set, train_class)
+  our_predictions = knn.predict(test_set)
+  print(dist_metric.__name__)
+  print("Prediction Accuracy: ")
+  print(100 * np.mean(our_predictions == test_class))
+  print()
+dist_euclidean
+Prediction Accuracy: 
+100.0
+
+dist_cosine
+Prediction Accuracy: 
+100.0
+
+dist_manhattan
+Prediction Accuracy: 
+100.0
+
+dist_chebyshev
+Prediction Accuracy: 
+100.0
+
+Questions to Think About and Answer:
+How are similarity and distance different from each other?
+Similarity and distance are two concepts used to measure how alike or different two objects are, respectively. They are often used in the context of machine learning, data analysis, and pattern recognition. Here's a detailed comparison:
+
+Similarity
+Definition: Similarity measures how alike two objects are. Higher similarity values indicate that the objects are more alike.
+Range: Similarity scores often range from 0 to 1, where 1 means the objects are identical, and 0 means they are completely different. Some similarity measures can have different ranges, such as the cosine similarity, which ranges from -1 to 1.
+Examples:
+Cosine Similarity: Measures the cosine of the angle between two non-zero vectors. It is commonly used in text analysis and other applications involving high-dimensional data.
+cosine similarity
+(
+𝐴
+,
+𝐵
+)
+=
+𝐴
+⋅
+𝐵
+∥
+𝐴
+∥
+∥
+𝐵
+∥
+cosine similarity(A,B)= 
+∥A∥∥B∥
+A⋅B
+​
+ 
+Jaccard Similarity: Measures the similarity between two sets by comparing the size of the intersection to the size of the union.
+Jaccard similarity
+(
+𝐴
+,
+𝐵
+)
+=
+∣
+𝐴
+∩
+𝐵
+∣
+∣
+𝐴
+∪
+𝐵
+∣
+Jaccard similarity(A,B)= 
+∣A∪B∣
+∣A∩B∣
+​
+ 
+Distance
+Definition: Distance measures how different two objects are. Greater distance values indicate that the objects are more different.
+Range: Distance measures can range from 0 to infinity, where 0 means the objects are identical, and larger values indicate greater dissimilarity.
+Examples:
+Euclidean Distance: The straight-line distance between two points in Euclidean space.
+𝑑
+euclidean
+(
+𝐴
+,
+𝐵
+)
+=
+∑
+𝑖
+=
+1
+𝑛
+(
+𝐴
+𝑖
+−
+𝐵
+𝑖
+)
+2
+d 
+euclidean
+​
+ (A,B)= 
+i=1
+∑
+n
+​
+ (A 
+i
+​
+ −B 
+i
+​
+ ) 
+2
+ 
+​
+ 
+Manhattan Distance: The sum of the absolute differences of their coordinates. Also known as L1 distance or taxicab distance.
+𝑑
+manhattan
+(
+𝐴
+,
+𝐵
+)
+=
+∑
+𝑖
+=
+1
+𝑛
+∣
+𝐴
+𝑖
+−
+𝐵
+𝑖
+∣
+d 
+manhattan
+​
+ (A,B)= 
+i=1
+∑
+n
+​
+ ∣A 
+i
+​
+ −B 
+i
+​
+ ∣
+Key Differences
+Nature:
+
+Similarity: Indicates how alike two objects are. Higher values mean more similarity.
+Distance: Indicates how different two objects are. Higher values mean more dissimilarity.
+Range:
+
+Similarity: Typically bounded (e.g., between 0 and 1 or -1 and 1).
+Distance: Typically unbounded and can range from 0 to infinity.
+Intuitive Interpretation:
+
+Similarity: Easier to interpret in terms of "closeness" or "alikeness." High similarity means the objects share many common features.
+Distance: Easier to interpret in terms of "separation" or "difference." High distance means the objects are far apart in the feature space.
+Relationship Between Similarity and Distance
+In many cases, similarity and distance are inversely related. For example:
+
+Cosine Similarity and Angular Distance: Cosine similarity is closely related to the angle between two vectors. Angular distance can be derived from the cosine similarity.
+Jaccard Similarity and Jaccard Distance: Jaccard distance is derived from Jaccard similarity:
+Jaccard distance
+(
+𝐴
+,
+𝐵
+)
+=
+1
+−
+Jaccard similarity
+(
+𝐴
+,
+𝐵
+)
+Jaccard distance(A,B)=1−Jaccard similarity(A,B)
+Practical Use Cases
+Similarity:
+
+Used in clustering algorithms like k-means, where we group similar objects together.
+Common in recommendation systems to find items similar to what a user likes.
+Utilized in text analysis for comparing documents, sentences, or words.
+Distance:
+
+Used in nearest neighbor algorithms (e.g., k-NN) where we classify a sample based on the closest samples in the feature space.
+Applied in various machine learning models and optimization problems where distances between points need to be minimized or maximized.
+Important in anomaly detection where outliers are detected based on their distance from the normal data points.
+In summary, while similarity and distance are related, they offer different perspectives on the relationship between objects. Similarity focuses on how alike objects are, while distance focuses on how different they are. Both are crucial in various analytical and machine learning tasks, depending on the specific requirements of the problem at hand.
+
+Are there any conditions for a particular distance to be considered a "distance metric"?
+Yes, there are specific conditions that a function must satisfy to be considered a distance metric. These conditions ensure that the function accurately represents the concept of distance in a mathematical sense. The four key conditions are:
+
+Non-negativity (or Positivity):
+
+The distance between any two points is always non-negative.
+𝑑
+(
+𝐴
+,
+𝐵
+)
+≥
+0
+for all
+𝐴
+,
+𝐵
+d(A,B)≥0for allA,B
+A special case is when 
+𝑑
+(
+𝐴
+,
+𝐵
+)
+=
+0
+d(A,B)=0 if and only if 
+𝐴
+=
+𝐵
+A=B.
+Identity of Indiscernibles:
+
+The distance between two points is zero if and only if the two points are identical.
+𝑑
+(
+𝐴
+,
+𝐵
+)
+=
+0
+  
+⟺
+  
+𝐴
+=
+𝐵
+d(A,B)=0⟺A=B
+Symmetry:
+
+The distance between two points is the same regardless of the direction in which it is measured.
+𝑑
+(
+𝐴
+,
+𝐵
+)
+=
+𝑑
+(
+𝐵
+,
+𝐴
+)
+for all
+𝐴
+,
+𝐵
+d(A,B)=d(B,A)for allA,B
+Triangle Inequality:
+
+The distance between two points is always less than or equal to the sum of the distances of those points to a third point.
+𝑑
+(
+𝐴
+,
+𝐵
+)
+≤
+𝑑
+(
+𝐴
+,
+𝐶
+)
++
+𝑑
+(
+𝐶
+,
+𝐵
+)
+for all
+𝐴
+,
+𝐵
+,
+𝐶
+d(A,B)≤d(A,C)+d(C,B)for allA,B,C
+Examples of Distance Metrics
+Euclidean Distance:
+
+𝑑
+euclidean
+(
+𝐴
+,
+𝐵
+)
+=
+∑
+𝑖
+=
+1
+𝑛
+(
+𝐴
+𝑖
+−
+𝐵
+𝑖
+)
+2
+d 
+euclidean
+​
+ (A,B)= 
+i=1
+∑
+n
+​
+ (A 
+i
+​
+ −B 
+i
+​
+ ) 
+2
+ 
+​
+ 
+Satisfies all four conditions, making it a valid distance metric.
+
+Manhattan Distance (or L1 Distance):
+
+𝑑
+manhattan
+(
+𝐴
+,
+𝐵
+)
+=
+∑
+𝑖
+=
+1
+𝑛
+∣
+𝐴
+𝑖
+−
+𝐵
+𝑖
+∣
+d 
+manhattan
+​
+ (A,B)= 
+i=1
+∑
+n
+​
+ ∣A 
+i
+​
+ −B 
+i
+​
+ ∣
+Also satisfies all four conditions, so it is a valid distance metric.
+
+Chebyshev Distance:
+
+𝑑
+chebyshev
+(
+𝐴
+,
+𝐵
+)
+=
+max
+⁡
+𝑖
+∣
+𝐴
+𝑖
+−
+𝐵
+𝑖
+∣
+d 
+chebyshev
+​
+ (A,B)= 
+i
+max
+​
+ ∣A 
+i
+​
+ −B 
+i
+​
+ ∣
+Satisfies all four conditions, making it a valid distance metric.
+
+Non-Examples of Distance Metrics
+Cosine Similarity:
+
+cosine similarity
+(
+𝐴
+,
+𝐵
+)
+=
+𝐴
+⋅
+𝐵
+∥
+𝐴
+∥
+∥
+𝐵
+∥
+cosine similarity(A,B)= 
+∥A∥∥B∥
+A⋅B
+​
+ 
+Cosine similarity is not a distance metric because it does not satisfy the identity of indiscernibles or the triangle inequality. However, one can define cosine distance as 
+1
+−
+cosine similarity
+(
+𝐴
+,
+𝐵
+)
+1−cosine similarity(A,B), but even this is not always a proper metric in the strict mathematical sense.
+
+Jaccard Similarity:
+
+Jaccard similarity
+(
+𝐴
+,
+𝐵
+)
+=
+∣
+𝐴
+∩
+𝐵
+∣
+∣
+𝐴
+∪
+𝐵
+∣
+Jaccard similarity(A,B)= 
+∣A∪B∣
+∣A∩B∣
+​
+ 
+Similar to cosine similarity, Jaccard similarity is not a distance metric. However, the Jaccard distance defined as 
+1
+−
+Jaccard similarity
+(
+𝐴
+,
+𝐵
+)
+1−Jaccard similarity(A,B) is a proper distance metric.
+
+Summary
+For a function to be considered a distance metric, it must satisfy non-negativity, identity of indiscernibles, symmetry, and the triangle inequality. These conditions ensure that the function accurately reflects the intuitive properties of distance. While many commonly used functions in data analysis and machine learning meet these criteria, some similarity measures do not and thus are not considered distance metrics.
+
+
+
+
+
+
+
+Useful Resources for further reading
+Analytics Vidhya: Distance metrics
+Scikit learn distance metric documentation
